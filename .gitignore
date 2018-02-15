@@ -57,3 +57,6 @@ typings/
 # dotenv environment variables file
 .env
 
+secret*
+.idea
+run_docker_ops.sh

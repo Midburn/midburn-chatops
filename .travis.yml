@@ -1,0 +1,14 @@
+language: bash
+sudo: required
+env:
+  matrix:
+  - DEPLOY_ENVIRONMENT=staging DEPLOY_BRANCH=master
+  - DEPLOY_ENVIRONMENT=production DEPLOY_TAGS=true
+  - ""
+services:
+- docker
+script:
+- ./continuous_deployment_travis.sh
+- if [ -z "${DEPLOY_ENVIRONMENT}" ]; then ./test.sh; fi
+notifications:
+  email: false
