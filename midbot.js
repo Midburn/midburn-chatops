@@ -28,7 +28,7 @@ var MIDBURN_K8S_PATH = process.env.MIDBURN_K8S_PATH ? process.env.MIDBURN_K8S_PA
 var PERMISSION_GROUPS = {
     // to add permissions, ask midbot "give me permissions"
     "superadmins": [
-        "xxxx"  // Ori Hoch
+        "U3PB3Q5J7"  // Ori Hoch
     ]
     // TODO: add more granular permissions, e.g. permissions only to staging environment
 };
