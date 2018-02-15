@@ -66,15 +66,26 @@ You can use the run_docker_ops.sh script to run it:
 wget https://raw.githubusercontent.com/OriHoch/sk8s/master/run_docker_ops.sh && chmod +x run_docker_ops.sh
 ```
 
-Build and run the image:
+Build and run the image using run_docker_ops:
 
 ```
-docker build -t midburn-chatops . &&\
-[ -e ./secret-k8s-ops.json ] &&\
+docker build -t midburn-chatops . && [ -e ./secret-k8s-ops.json ] &&\
 ./run_docker_ops.sh "staging" \
                     "source ~/.bashrc; cd /src; npm start" \
                     "midburn-chatops" \
                     "Midburn/midburn-k8s" "master" \
                     "./secret-k8s-ops.json" " -v `pwd`/secret-slack-token:/src/secret-slack-token \
                                               -e slack_token_path=./secret-slack-token "
+```
+
+Run the image directly:
+
+```
+docker build -t midburn-chatops . && [ -e ./secret-k8s-ops.json ] &&\
+docker run -it --entrypoint bash \
+               -v `pwd`/secret-slack-token:/src/secret-slack-token \
+               -v `pwd`/secret-k8s-ops.json:/k8s-ops/secret.json \
+               -e slack_token_path=./secret-slack-token \
+               midburn-chatops \
+               -c "source ~/.bashrc; cd /src; npm start"
 ```

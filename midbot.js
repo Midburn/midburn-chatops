@@ -24,6 +24,7 @@ var child_process = require('child_process');
 // default to path inside the docker file
 // for local development, set it to the midburn-k8s repo path, something like MIDBURN_K8S_PATH=/home/user/projects/midburn-k8s
 var MIDBURN_K8S_PATH = process.env.MIDBURN_K8S_PATH ? process.env.MIDBURN_K8S_PATH : "/ops";
+console.log("MIDBURN_K8S_PATH="+MIDBURN_K8S_PATH);
 
 var PERMISSION_GROUPS = {
     // to add permissions, ask midbot "give me permissions"
@@ -65,6 +66,11 @@ fs.readFile(process.env.slack_token_path, function (err, data) {
 //       bot.reply(message, 'Meow. :smile_cat:')
 //   });
 
+
+// sanity
+midburnK8S("staging", "echo ready", function(res){
+    if (res.err) process.exit(1);
+});
 
 /**
  * Allow users to ask for permissions on the bot
@@ -134,8 +140,8 @@ controller.hears(
 function midburnK8S(k8s_environment, script, cb) {
     console.log("executing script on " + k8s_environment + " environment...");
     child_process.exec(
-        "( source switch_environment.sh " + k8s_environment + "; " + script + " ) 2>&1",
-        {cwd: MIDBURN_K8S_PATH, shell: "bash"},
+        "source switch_environment.sh " + k8s_environment + "; " + script + " 2>&1",
+        {"cwd": MIDBURN_K8S_PATH, "env": process.env, "shell": "/bin/bash"},
         function (err, stdout, stderr) {
             console.log("script completed, err=" + err);
             cb({"err": err, "stdout": stdout});

@@ -9,3 +9,6 @@ RUN npm install
 COPY midbot.js /src
 
 CMD ["-c", "npm start"]
+
+ENV OPS_REPO_SLUG=Midburn/midburn-k8s
+ENV OPS_REPO_BRANCH=master
