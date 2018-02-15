@@ -1,4 +1,4 @@
-FROM node:8
+FROM orihoch/sk8s-ops:node8
 
 # Install app dependencies.
 COPY package.json /src/package.json
@@ -8,4 +8,4 @@ RUN npm install
 # Bundle app source.
 COPY midbot.js /src
 
-CMD ["npm", "start"]
+CMD ["-c", "npm start"]

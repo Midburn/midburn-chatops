@@ -59,3 +59,4 @@ typings/
 
 secret*
 .idea
+run_docker_ops.sh
