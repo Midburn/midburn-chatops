@@ -17,21 +17,21 @@ cd /ops
                           "${OPS_REPO_SLUG}" "${OPS_REPO_BRANCH}" \
     && echo 'failed helm update values' && RES=1;
 
-# ! ./helm_upgrade_external_chart.sh chatops \
-#     && echo "failed to upgrade chatops chart" && RES=1;
+! ./helm_upgrade_external_chart.sh chatops \
+    && echo "failed to upgrade chatops chart" && RES=1;
 
-#while ! kubectl rollout status deployment chatops --watch=false; do
-#    echo 'waiting for chatops deployment rollout';
-#    for POD in `kubectl get pods | grep chatops- | cut -d" " -f1 -`; do
-#        POD_JSON=`kubectl get -ojson pod $POD`;
-#        POD_STATUS=`echo "${POD_JSON}" | jq -r .status.phase`;
-#        if [ "${POD_STATUS}" != "Running" ]; then
-#            kubectl describe pod $POD;
-#            kubectl logs --tail=100 $POD -c chatops;
-#        fi;
-#    done;
-#    echo "sleeping for 60 seconds"
-#    sleep 60;
-#done;
+while ! kubectl rollout status deployment chatops --watch=false; do
+    echo 'waiting for chatops deployment rollout';
+    for POD in `kubectl get pods | grep chatops- | cut -d" " -f1 -`; do
+        POD_JSON=`kubectl get -ojson pod $POD`;
+        POD_STATUS=`echo "${POD_JSON}" | jq -r .status.phase`;
+        if [ "${POD_STATUS}" != "Running" ]; then
+            kubectl describe pod $POD;
+            kubectl logs --tail=100 $POD -c chatops;
+        fi;
+    done;
+    echo "sleeping for 60 seconds"
+    sleep 60;
+done;
 
 exit $RES
