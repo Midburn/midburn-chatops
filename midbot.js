@@ -84,15 +84,16 @@ controller.hears(
 );
 
 /**
- * Get list of pods
+ * Get list of objects
  */
 controller.hears(
-    ['get (production|staging) pods'], ['direct_message', 'direct_mention', 'mention'],
+    ['get (production|staging) (pods|jobs|cronjobs|nodes|all)'], ['direct_message', 'direct_mention', 'mention'],
     function (bot, message) {
         var k8s_environment = message.match[1];
-        console.log("Got request to get " + k8s_environment + " pods");
+        var what = message.match[2];
+        console.log("Got request to get " + k8s_environment + " " + what);
         if (check_environment_permissions(bot, message, k8s_environment)) {
-            midburnK8S(k8s_environment, "kubectl get pods;", function (res) {
+            midburnK8S(k8s_environment, "kubectl get "+what+";", function (res) {
                 bot.reply(message, res.stdout)
             });
         }
@@ -124,11 +125,11 @@ controller.hears(
     ['recreate spark staging db from (.*)'], ['direct_message', 'direct_mention', 'mention'],
     function (bot, message) {
         var k8s_environment = 'staging';
-        var import_url = message.match[1];
-        console.log("Got request to recreate spark staging db from import_url " + import_url);
+        var import_suffix = message.match[1];
+        console.log("Got request to recreate spark staging db from " + import_suffix);
         if (check_pod_permissions(bot, message, k8s_environment, 'sparkdb')) {
-            midburnK8S(k8s_environment, "cd /ops; charts-external/spark/recreate_db.sh " + import_url, function (res) {
-                bot.reply(message, res.stdout)
+            midburnK8S(k8s_environment, "cd /ops; export WAIT_FOR_COMPLETION=no; export ARE_YOU_SURE=yes; charts-external/spark/recreate_db.sh " + import_suffix, function (res) {
+                bot.reply(message, res.stdout + "\n\nShouldn't take more then a few seconds until the new DB is ready, you can verify in adminer - https://staging.midburn.org/adminer")
             });
         }
     }
