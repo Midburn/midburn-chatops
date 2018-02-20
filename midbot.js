@@ -118,6 +118,23 @@ controller.hears(
 );
 
 /**
+ * recreate the spark staging DB
+ */
+controller.hears(
+    ['recreate spark staging db from (.*)'], ['direct_message', 'direct_mention', 'mention'],
+    function (bot, message) {
+        var k8s_environment = 'staging';
+        var import_url = message.match[1];
+        console.log("Got request to recreate spark staging db from import_url " + import_url);
+        if (check_pod_permissions(bot, message, k8s_environment, 'sparkdb')) {
+            midburnK8S(k8s_environment, "cd /ops; charts-external/spark/recreate_db.sh " + import_url, function (res) {
+                bot.reply(message, res.stdout)
+            });
+        }
+    }
+);
+
+/**
  * Deploy Spark
  */
 // controller.hears([RegExp(/Deploy Spark (.*) v(.*)/i)], ['direct_message', 'direct_mention', 'mention'],
